@@ -8,6 +8,7 @@ def main():
         help="URL you wish to get ip address of"
     )
     args = parser.parse_args()
+    url = args.url
 
 
 if __name__ == "__main__":
