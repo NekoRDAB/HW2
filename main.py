@@ -1,4 +1,5 @@
 import argparse
+from dns_server import DNSServer
 
 
 def main():
