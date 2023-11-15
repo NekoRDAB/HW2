@@ -102,11 +102,20 @@ class DNSAnswer:
     @staticmethod
     def parse_from_bytes(byte_answer: DNSAnswerByte):
         name = byte_answer.name
-        atype = DNSAnswer.ATYPES[byte_answer.atype]
+        atype = DNSAnswer.ATYPES[int(byte_answer.atype, base=16)]
         aclass = "IN"
         ttl = int(byte_answer.ttl, base=16)
-        data = DNSAnswer.parse_data(byte_answer.rddata)
+        data = DNSAnswer.parse_data(atype, byte_answer.rddata)
 
     @staticmethod
-    def parse_data(rddata: str):
+    def parse_data(atype: str, rddata: str) -> str:
+        if atype == "A":
+            return DNSAnswer.parse_ip(rddata)
 
+    @staticmethod
+    def parse_ip(rddata: str) -> str:
+        segments = []
+        for i in range(4):
+            segment = rddata[2*i:2*i+2]
+            segments.append(str(int(segment, base=16)))
+        return ".".join(segments)
