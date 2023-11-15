@@ -106,11 +106,14 @@ class DNSAnswer:
         aclass = "IN"
         ttl = int(byte_answer.ttl, base=16)
         data = DNSAnswer.parse_data(atype, byte_answer.rddata)
+        return DNSAnswer(name, atype, aclass, ttl, data)
 
     @staticmethod
     def parse_data(atype: str, rddata: str) -> str:
         if atype == "A":
             return DNSAnswer.parse_ip(rddata)
+        if atype == "NS":
+            return DNSAnswer.parse_domain_name(rddata)
 
     @staticmethod
     def parse_ip(rddata: str) -> str:
@@ -119,3 +122,20 @@ class DNSAnswer:
             segment = rddata[2*i:2*i+2]
             segments.append(str(int(segment, base=16)))
         return ".".join(segments)
+
+    @staticmethod
+    def parse_domain_name(rddata: str):
+        sections = []
+        index = 0
+        length = int(rddata[2*index:2*index+2], base=16)
+        index += 1
+        while length > 0:
+            section = ""
+            for i in range(length):
+                symbol_code = int(rddata[2*index:2*index+2], base=16)
+                index += 1
+                section += chr(symbol_code)
+            sections.append(section)
+            length = int(rddata[2*index:2*index+2], base=16)
+            index += 1
+        return ".".join(sections)
