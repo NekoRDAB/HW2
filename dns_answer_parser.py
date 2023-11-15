@@ -14,8 +14,8 @@ class DNSAnswerParser:
                + self.next_byte() + self.next_byte())
         rdlength = self.next_byte() + self.next_byte()
         rddata = self.parse_rddata(rdlength)
-        return DNSAnswer(question, qtype, qclass,
-                         name, atype, aclass, ttl, rdlength, rddata)
+        return DNSAnswerByte(question, qtype, qclass,
+                             name, atype, aclass, ttl, rdlength, rddata)
 
     def parse_question(self):
         id = self.next_byte() + self.next_byte()
@@ -61,11 +61,9 @@ class DNSAnswerParser:
 
     def parse_rddata(self, rdlength):
         length = int(rdlength, base=16)
-        print(length)
         rddata = ""
         for i in range(length):
             rddata += self.next_byte()
-            print(rddata)
         return rddata
 
     def next_byte(self):
@@ -77,7 +75,7 @@ class DNSAnswerParser:
         return self.answer[index: index + 2]
 
 
-class DNSAnswer:
+class DNSAnswerByte:
     def __init__(self, question, qtype, qclass,
                  name, atype, aclass, ttl, rdlength, rddata):
         self.question = question
@@ -89,3 +87,26 @@ class DNSAnswer:
         self.ttl = ttl
         self.rdlength = rdlength
         self.rddata = rddata
+
+
+class DNSAnswer:
+    ATYPES = {1: "A", 2: "NS"}
+
+    def __init__(self, name, atype, aclass, ttl, data):
+        self.name = name
+        self.atype = atype
+        self.aclass = aclass
+        self.ttl = ttl
+        self.data = data
+
+    @staticmethod
+    def parse_from_bytes(byte_answer: DNSAnswerByte):
+        name = byte_answer.name
+        atype = DNSAnswer.ATYPES[byte_answer.atype]
+        aclass = "IN"
+        ttl = int(byte_answer.ttl, base=16)
+        data = DNSAnswer.parse_data(byte_answer.rddata)
+
+    @staticmethod
+    def parse_data(rddata: str):
+
