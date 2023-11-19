@@ -1,7 +1,5 @@
 import argparse
-import socket
 from dns_server import DNSServer
-from server import Server
 
 
 HOST = "127.0.0.1"
