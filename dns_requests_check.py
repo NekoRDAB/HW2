@@ -44,7 +44,7 @@ def format_hex(hex):
 # print(format_hex(response_recursive_for_gltd_servers))
 # print("////")
 #
-# message_iterative_for_gltd_servers = "AA AA 00 00 00 01 00 00 00 00 00 00 " \
-#     "01 65 0c 67 74 6C 64 2D 73 65 72 76 65 72 73 03 6E 65 74 00 00 01 00 01"
-# response_iterative_for_gltd_servers = send_udp_message(message_iterative_for_gltd_servers, "8.8.8.8", 53)
-# print(format_hex(response_iterative_for_gltd_servers))
+# message_iterative_for_ns2_google_com = "AA AA 00 00 00 01 00 00 00 00 00 00 " \
+#     "03 6E 73 32 06 67 6F 6F 67 6C 65 03 63 6F 6D 00 00 01 00 01"
+# response_iterative_for_ns2_google_com = send_udp_message(message_iterative_for_ns2_google_com, "198.41.0.4", 53)
+# print(format_hex(response_iterative_for_ns2_google_com))

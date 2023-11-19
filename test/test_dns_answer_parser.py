@@ -31,6 +31,13 @@ class TestDNSAnswerParser(unittest.TestCase):
         actual = DNSAnswer.parse_data("NS", rddata)
         self.assertEqual(expected, actual)
 
+    def test_parse_compressed_label(self):
+        DNSAnswer.answer ="0000820000010000000d000b07796f757475626503636f6d0000010001c014000200010002a300001401650c67746c642d73657276657273036e657400c01400"
+        offset = bin(int("c014", base=16))[2:]
+        expected = "com"
+        actual = DNSAnswer.parse_compressed_label(offset)
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

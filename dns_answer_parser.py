@@ -14,6 +14,7 @@ class DNSAnswerParser:
                + self.next_byte() + self.next_byte())
         rdlength = self.next_byte() + self.next_byte()
         rddata = self.parse_rddata(rdlength)
+        DNSAnswer.answer = self.answer
         return DNSAnswerByte(question, qtype, qclass,
                              name, atype, aclass, ttl, rdlength, rddata)
 
@@ -67,7 +68,7 @@ class DNSAnswerParser:
         return rddata
 
     def next_byte(self):
-        result = self.answer[self.pointer: self.pointer + 2]
+        result = self.answer[self.pointer] + self.answer[self.pointer + 1]
         self.pointer += 2
         return result
 
@@ -91,6 +92,7 @@ class DNSAnswerByte:
 
 class DNSAnswer:
     ATYPES = {1: "A", 2: "NS"}
+    answer = ""
 
     def __init__(self, name, atype, aclass, ttl, data):
         self.name = name
@@ -136,6 +138,32 @@ class DNSAnswer:
                 index += 1
                 section += chr(symbol_code)
             sections.append(section)
-            length = int(rddata[2*index:2*index+2], base=16)
+            byte_sequence = rddata[2*index:2*index+2]
+            if len(bin(int(byte_sequence, base=16))[2:]) == 8:
+                index += 1
+                byte_sequence += rddata[2*index:2*index+2]
+                sections.append(DNSAnswer.parse_compressed_label(bin(int(byte_sequence, base=16))[2:]))
+                index += 1
+                if 2*index >= len(rddata):
+                    break
+            else:
+                length = int(byte_sequence, base=16)
+            index += 1
+        return ".".join(sections)
+
+    @staticmethod
+    def parse_compressed_label(binary_offset):
+        index = int(binary_offset[2:], base=2)
+        sections = []
+        length = int(DNSAnswer.answer[2*index:2*index+2], base=16)
+        index += 1
+        while length > 0:
+            section = ""
+            for i in range(length):
+                symbol_code = int(DNSAnswer.answer[2*index:2*index+2], base=16)
+                index += 1
+                section += chr(symbol_code)
+            sections.append(section)
+            length = int(DNSAnswer.answer[2*index:2*index+2], base=16)
             index += 1
         return ".".join(sections)

@@ -10,7 +10,7 @@ class DNSServer:
 
     def find_ip_address(self):
         query = DNSQuery.build_query_message(self.url)
-        server = "198.41.0.4"
+        server = "192.5.5.241"
         port = 53
         response = MessageSender.send_udp_message(query, server, port)
         dns_answer_byte = DNSAnswerParser(response).parse_answer()
@@ -26,7 +26,7 @@ class DNSServer:
 
     @staticmethod
     def get_server_ip(server_url):
-        query = DNSQuery.build_query_message(server_url)
+        query = DNSQuery.build_query_mesage(server_url)
         response = MessageSender.send_udp_message(query, "8.8.8.8", 53)
         dns_answer_byte = DNSAnswerParser(response).parse_answer()
         dns_answer = DNSAnswer.parse_from_bytes(dns_answer_byte)

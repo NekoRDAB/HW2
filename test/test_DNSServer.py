@@ -8,7 +8,7 @@ class TestDNSServer(unittest.TestCase):
         sections_second = second.split(".")[:-1]
         return sections_first == sections_second
 
-    def test_find_ip_address(self):
+    def test_find_ip_address_vk(self):
         url = "vk.com"
         server = DNSServer(url)
         expected = "87.240.132.78"

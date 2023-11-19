@@ -56,6 +56,12 @@ class DNSQuery:
             hex += str(format(int(quartet, 2), 'x'))
         return hex
 
+    @staticmethod
+    def build_query_mesage(url):
+        header = DNSQuery.build_header("0100")
+        question = DNSQuery.build_question(url)
+        return header + question
+
 
 def format_hex(hex):
     """format_hex returns a pretty version of a hex string"""
